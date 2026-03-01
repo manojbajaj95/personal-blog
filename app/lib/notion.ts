@@ -13,6 +13,7 @@ async function notionFetch(endpoint: string, options: RequestInit = {}) {
       'Content-Type': 'application/json',
       ...options.headers,
     },
+    next: { revalidate: 3600 },
   })
 
   if (!response.ok) {
@@ -139,11 +140,17 @@ export async function getPageProperties(page: any) {
   const summary = properties.Summary?.rich_text?.[0]?.plain_text ?? ''
   const publishedAt = properties.Date?.date?.start ?? page.created_time
   const image = properties.Image?.url ?? null
+  const author = properties.Author?.rich_text?.[0]?.plain_text ?? ''
+  const updatedAt = properties.Updated?.date?.start ?? publishedAt
+  const tags = (properties.Tags?.multi_select ?? []).map((t: any) => t.name)
 
   return {
     title,
     summary,
     publishedAt,
     image,
+    author,
+    updatedAt,
+    tags,
   }
 }

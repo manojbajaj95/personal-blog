@@ -49,12 +49,12 @@ function RoundedImage(props) {
 }
 
 function Code({ children, ...props }) {
-  let codeHTML = highlight(children)
+  let codeHTML = highlight(children ?? '')
   return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
 }
 
 function slugify(str) {
-  return str
+  return (str ?? '')
     .toString()
     .toLowerCase()
     .trim() // Remove whitespace from both ends of a string

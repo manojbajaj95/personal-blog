@@ -5,6 +5,8 @@ export const metadata = {
   description: 'Read my blog.',
 }
 
+export const revalidate = 3600
+
 export default function Page() {
   return (
     <section>

@@ -5,13 +5,11 @@ type Metadata = {
   publishedAt: string
   summary: string
   image?: string
+  author: string
+  updatedAt: string
+  tags: string[]
 }
 
-let postsCache: Array<{
-  slug: string
-  metadata: Metadata
-  content: string
-}> | null = null
 
 function slugify(text: string): string {
   return text
@@ -21,9 +19,6 @@ function slugify(text: string): string {
 }
 
 export async function getBlogPosts() {
-  if (postsCache) {
-    return postsCache
-  }
 
   const pages = await getDatabasePages()
 
@@ -42,13 +37,15 @@ export async function getBlogPosts() {
           publishedAt: properties.publishedAt,
           summary: properties.summary,
           image: properties.image ?? undefined,
+          author: properties.author,
+          updatedAt: properties.updatedAt,
+          tags: properties.tags,
         },
         content,
       }
     })
   )
 
-  postsCache = posts
   return posts
 }
 
