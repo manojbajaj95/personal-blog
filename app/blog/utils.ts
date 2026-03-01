@@ -1,5 +1,4 @@
-import fs from 'fs'
-import path from 'path'
+import { getDatabasePages, getPageMarkdown, getPageProperties } from 'app/lib/notion'
 
 type Metadata = {
   title: string
@@ -8,49 +7,49 @@ type Metadata = {
   image?: string
 }
 
-function parseFrontmatter(fileContent: string) {
-  let frontmatterRegex = /---\s*([\s\S]*?)\s*---/
-  let match = frontmatterRegex.exec(fileContent)
-  let frontMatterBlock = match![1]
-  let content = fileContent.replace(frontmatterRegex, '').trim()
-  let frontMatterLines = frontMatterBlock.trim().split('\n')
-  let metadata: Partial<Metadata> = {}
+let postsCache: Array<{
+  slug: string
+  metadata: Metadata
+  content: string
+}> | null = null
 
-  frontMatterLines.forEach((line) => {
-    let [key, ...valueArr] = line.split(': ')
-    let value = valueArr.join(': ').trim()
-    value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
-    metadata[key.trim() as keyof Metadata] = value
-  })
-
-  return { metadata: metadata as Metadata, content }
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
 }
 
-function getMDXFiles(dir) {
-  return fs.readdirSync(dir).filter((file) => path.extname(file) === '.mdx')
-}
+export async function getBlogPosts() {
+  if (postsCache) {
+    return postsCache
+  }
 
-function readMDXFile(filePath) {
-  let rawContent = fs.readFileSync(filePath, 'utf-8')
-  return parseFrontmatter(rawContent)
-}
+  const pages = await getDatabasePages()
 
-function getMDXData(dir) {
-  let mdxFiles = getMDXFiles(dir)
-  return mdxFiles.map((file) => {
-    let { metadata, content } = readMDXFile(path.join(dir, file))
-    let slug = path.basename(file, path.extname(file))
+  const posts = await Promise.all(
+    pages.map(async (page: any) => {
+      const pageId = page.id
+      const properties = await getPageProperties(page)
+      const content = await getPageMarkdown(pageId)
 
-    return {
-      metadata,
-      slug,
-      content,
-    }
-  })
-}
+      const slug = slugify(properties.title)
 
-export function getBlogPosts() {
-  return getMDXData(path.join(process.cwd(), 'app', 'blog', 'posts'))
+      return {
+        slug,
+        metadata: {
+          title: properties.title,
+          publishedAt: properties.publishedAt,
+          summary: properties.summary,
+          image: properties.image ?? undefined,
+        },
+        content,
+      }
+    })
+  )
+
+  postsCache = posts
+  return posts
 }
 
 export function formatDate(date: string, includeRelative = false) {
