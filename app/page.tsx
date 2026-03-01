@@ -11,15 +11,11 @@ export default function Page() {
   let about = getAboutContent()
   return (
     <section>
-      <h1 className="mb-8 text-2xl font-semibold tracking-tighter">
-        My Portfolio
-      </h1>
-      <div className="prose">
+      <div className="prose mb-8">
         <CustomMDX source={about} />
       </div>
-      <div className="my-8">
-        <BlogPosts />
-      </div>
+      <h2 className="font-semibold text-xl mb-4 tracking-tighter">Writing</h2>
+      <BlogPosts />
     </section>
   )
 }
