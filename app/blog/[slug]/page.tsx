@@ -81,8 +81,49 @@ export default async function Blog({ params }: { params: Promise<{ slug: string 
             url: `${baseUrl}/blog/${post.slug}`,
             author: {
               '@type': 'Person',
-              name: 'My Portfolio',
+              '@id': `${baseUrl}/#person`,
+              name: 'Manoj Bajaj',
+              url: baseUrl,
             },
+            publisher: {
+              '@type': 'Person',
+              '@id': `${baseUrl}/#person`,
+              name: 'Manoj Bajaj',
+            },
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': `${baseUrl}/blog/${post.slug}`,
+            },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: baseUrl,
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Blog',
+                item: `${baseUrl}/blog`,
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: post.metadata.title,
+                item: `${baseUrl}/blog/${post.slug}`,
+              },
+            ],
           }),
         }}
       />
