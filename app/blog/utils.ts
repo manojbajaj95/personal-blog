@@ -46,7 +46,7 @@ export async function getBlogPosts() {
     })
   )
 
-  return posts
+  return posts.filter(post => !post.metadata.tags.includes('draft'))
 }
 
 export function formatDate(date: string, includeRelative = false) {
