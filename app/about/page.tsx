@@ -34,8 +34,8 @@ export default function AboutPage() {
             '@id': `${baseUrl}/about/#profilepage`,
             url: `${baseUrl}/about`,
             name: 'About Manoj Bajaj',
-            dateCreated: '2025-01-01',
-            dateModified: new Date().toISOString().split('T')[0],
+            dateCreated: '2025-01-01T00:00:00.000Z',
+            dateModified: new Date().toISOString(),
             mainEntity: {
               '@type': 'Person',
               '@id': `${baseUrl}/#person`,
