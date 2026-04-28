@@ -137,10 +137,10 @@ export async function getPageProperties(page: any) {
   const properties = page.properties
 
   const title = properties.Name?.title?.[0]?.plain_text ?? 'Untitled'
-  const summary = properties.Summary?.rich_text?.[0]?.plain_text ?? ''
+  const summary = (properties.Summary?.rich_text ?? []).map((t: any) => t.plain_text).join('')
   const publishedAt = properties.Date?.date?.start ?? page.created_time
   const image = properties.Image?.url ?? null
-  const author = properties.Author?.rich_text?.[0]?.plain_text ?? ''
+  const author = (properties.Author?.rich_text ?? []).map((t: any) => t.plain_text).join('')
   const updatedAt = properties.Updated?.date?.start ?? publishedAt
   const tags = (properties.Tags?.multi_select ?? []).map((t: any) => t.name)
 
